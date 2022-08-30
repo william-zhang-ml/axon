@@ -1,6 +1,9 @@
 """ Implementations for various flavors of ResNet/ResNeXt. """
+from typing import Tuple, Union
+from torch import nn
 from torch import Tensor
 from torch.nn import Module
+from . import ConvBlock
 
 
 class ResidualCustom(Module):
@@ -25,3 +28,58 @@ class ResidualCustom(Module):
         Return: residual-adjusted feature maps
         """
         return inp + self.residual(inp)
+
+
+class ResidualClassic(ResidualCustom):
+    """ Residual layer that skips over 2 convolution layers as per
+        'Deep Residual Learning for Image Recognition'
+        and
+        'Identity Mappings in Deep Residual Networks' """
+    # pylint: disable=too-many-arguments
+    def __init__(self,
+                 channels: int,
+                 kernel_size: Union[int, Tuple[int, int]] = 3,
+                 stride: Union[int, Tuple[int, int]] = 1,
+                 padding: Union[str, int, Tuple[int, int]] = 1,
+                 dilation: Union[int, Tuple[int, int]] = 1,
+                 groups: int = 1,
+                 bias: bool = False,
+                 norm_first: bool = True) -> None:
+        """
+        Define and initialize residual connection.
+
+        Args:
+            channels:     number of input neurons/channels
+            kernel_size:  kernel height and width
+            stride:       stride height and width, defaults to 1
+            padding:      row and col pixels to pad, defaults to 0
+            dilation:     space between kernel weights, defaults to 1
+            groups:       number of input groups, defaults to 1
+            bias:         whether conv layer uses bias terms, defaults to False
+            norm_first:   whether to batchnorm or relu first, defaults to True
+        """
+        super().__init__(
+            nn.Sequential(
+                ConvBlock(
+                    in_channels=channels,
+                    out_channels=channels,
+                    kernel_size=kernel_size,
+                    stride=stride,
+                    padding=padding,
+                    dilation=dilation,
+                    groups=groups,
+                    bias=bias,
+                    norm_first=norm_first),
+                ConvBlock(
+                    in_channels=channels,
+                    out_channels=channels,
+                    kernel_size=kernel_size,
+                    stride=stride,
+                    padding=padding,
+                    dilation=dilation,
+                    groups=groups,
+                    bias=bias,
+                    norm_first=norm_first),
+            )
+        )
+    # pylint: enable=too-many-arguments

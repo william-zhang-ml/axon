@@ -1,5 +1,17 @@
 """ Misc quality-of-life code. """
-from torch.nn import Sequential
+from typing import Union
+from torch.nn import Module, Sequential
+
+
+def count_params(layer: Union[Module, Sequential]) -> int:
+    """ Count the number of layer parameters.
+
+    Args:
+        layer: parameterized layer
+
+    Returns: number of layer parameters
+    """
+    return sum([p.nelement() for p in layer.parameters()])
 
 
 def repeat_layer(n_layers: int, layer: type, *args, **kwargs) -> Sequential:

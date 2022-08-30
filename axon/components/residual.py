@@ -20,7 +20,7 @@ class ResidualCustom(Module):
 
     def forward(self, inp: Tensor) -> Tensor:
         """
-        Add adaptive residual term to input
+        Add adaptive residual term to input.
 
         Args:
             inp: input feature maps

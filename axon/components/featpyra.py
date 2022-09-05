@@ -47,7 +47,7 @@ class FeaturePyramidBlock(Module):
 
     def forward(self,
                 lowres: Tensor,
-                highres) -> Tensor:
+                highres: Tensor) -> Tensor:
         """
         Fuse features for higher resolution multi-scale feature map.
 
@@ -76,19 +76,19 @@ class FeaturePyramidEncoder(Module):
         Constructor. Set up initial projection layer and fusion blocks.
 
         Args:
-            in_channels:  number of input channels (top-to-bottom)
+            in_channels:  number of input channels (bottom-to-top)
             out_channels: desired number of top-down path channels
         """
         super().__init__()
         self.projection = nn.Conv2d(
-            in_channels=in_channels[0],
+            in_channels=in_channels[-1],
             out_channels=out_channels,
             kernel_size=1,
             stride=1,
             padding=0)
         self.blocks = nn.ModuleList([
             FeaturePyramidBlock(in_chan, out_channels)
-            for in_chan in in_channels[1:]
+            for in_chan in in_channels[:-1]
         ])
 
     def forward(self, featmaps: List[Tensor]) -> List[Tensor]:
@@ -103,7 +103,7 @@ class FeaturePyramidEncoder(Module):
         featmaps = featmaps[::-1]
         fused = [self.projection(featmaps[0])]  # start top-down path
         topdown = fused[0]
-        for lateral, block in zip(featmaps[1:], self.blocks):
+        for lateral, block in zip(featmaps[1:], self.blocks[::-1]):
             topdown = block(topdown, lateral)
             fused.append(topdown)
         return fused[::-1]

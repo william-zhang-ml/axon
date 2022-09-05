@@ -34,7 +34,7 @@ class ResidualClassic(ResidualCustom):
     """ Residual layer that skips over 2 convolution layers as per
         'Deep Residual Learning for Image Recognition'
         and
-        'Identity Mappings in Deep Residual Networks' """
+        'Identity Mappings in Deep Residual Networks'. """
     # pylint: disable=too-many-arguments
     def __init__(self,
                  channels: int,
@@ -89,7 +89,7 @@ class ResidualBottleneck(ResidualCustom):
     """ Bottlenecked residual layer as per
         'Deep Residual Learning for Image Recognition'
         and
-        'Identity Mappings in Deep Residual Networks' """
+        'Identity Mappings in Deep Residual Networks'. """
     # pylint: disable=too-many-arguments
     def __init__(self,
                  in_channels: int,
@@ -148,7 +148,7 @@ class ResiduaTransition(ResidualCustom):
     """ Resolution transition residual layer as per
         'Deep Residual Learning for Image Recognition'
         and
-        'Identity Mappings in Deep Residual Networks' """
+        'Identity Mappings in Deep Residual Networks'. """
     # pylint: disable=too-many-arguments
     def __init__(self,
                  in_channels: int,
